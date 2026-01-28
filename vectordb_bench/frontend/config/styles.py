@@ -50,6 +50,7 @@ DB_TO_ICON = {
     DB.TiDB: "https://img2.pingcap.com/forms/3/d/3d7fd5f9767323d6f037795704211ac44b4923d6.png",
     DB.Vespa: "https://vespa.ai/vespa-content/uploads/2025/01/Vespa-symbol-green-rgb.png.webp",
     DB.LanceDB: "https://raw.githubusercontent.com/lancedb/lancedb/main/docs/src/assets/logo.png",
+    DB.AlayaLite: "https://avatars.githubusercontent.com/u/201055320"
 }
 
 # RedisCloud color: #0D6EFD

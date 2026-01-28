@@ -22,6 +22,7 @@ class DB(Enum):
         "Milvus"
     """
 
+    AlayaLite = "AlayaLite"
     Milvus = "Milvus"
     ZillizCloud = "ZillizCloud"
     Pinecone = "Pinecone"
@@ -55,6 +56,11 @@ class DB(Enum):
 
             return Milvus
 
+        if self == DB.AlayaLite:
+            from .alayalite.alayalite import AlayaLite
+
+            return AlayaLite
+            
         if self == DB.ZillizCloud:
             from .zilliz_cloud.zilliz_cloud import ZillizCloud
 
@@ -175,7 +181,11 @@ class DB(Enum):
 
     @property
     def config_cls(self) -> type[DBConfig]:  # noqa: PLR0911, PLR0912, C901, PLR0915
-        """Import while in use"""
+        if self == DB.AlayaLite:
+            from .alayalite.config import AlayaLiteConfig
+
+            return AlayaLiteConfig
+        
         if self == DB.Milvus:
             from .milvus.config import MilvusConfig
 
@@ -303,9 +313,13 @@ class DB(Enum):
         self,
         index_type: IndexType | None = None,
     ) -> type[DBCaseConfig]:
+        if self == DB.AlayaLite:
+            from .alayalite.config import AlayaLiteHNSWConfig 
+
+            return AlayaLiteHNSWConfig
+        
         if self == DB.Milvus:
             from .milvus.config import _milvus_case_config
-
             return _milvus_case_config.get(index_type)
 
         if self == DB.ZillizCloud:

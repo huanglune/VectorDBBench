@@ -1,0 +1,69 @@
+{
+    "run_id": "f539a0494b13499aa5e11d2aa39abe9b",
+    "task_label": "2025052707",
+    "results": [
+        {
+            "metrics": {
+                "max_load_count": 0,
+                "load_duration": 67.9741,
+                "qps": 599.7492,
+                "serial_latency_p99": 0.0108,
+                "recall": 0.9322,
+                "ndcg": 0.944,
+                "conc_num_list": [
+                    1,
+                    5
+                ],
+                "conc_qps_list": [
+                    116.2158,
+                    599.7492
+                ],
+                "conc_latency_p99_list": [
+                    0.014824125217273833,
+                    0.010624762341612947
+                ],
+                "conc_latency_avg_list": [
+                    0.00842277676187983,
+                    0.008150581040997919
+                ]
+            },
+            "task_config": {
+                "db": "AlayaLite",
+                "db_config": {
+                    "db_label": "",
+                    "version": "",
+                    "note": "",
+                    "url": ".alayalite_data"
+                },
+                "db_case_config": {
+                    "metric_type": "COSINE",
+                    "quantization_type": "none",
+                    "ef_construction": 100,
+                    "ef": 101
+                },
+                "case_config": {
+                    "case_id": 50,
+                    "custom_case": null,
+                    "k": 100,
+                    "concurrency_search_config": {
+                        "num_concurrency": [
+                            1,
+                            5
+                        ],
+                        "concurrency_duration": 30,
+                        "concurrency_timeout": 3600
+                    }
+                },
+                "stages": [
+                    "drop_old",
+                    "load",
+                    "search_serial",
+                    "search_concurrent"
+                ]
+            },
+            "label": ":)"
+        }
+    ],
+    "file_fmt": "result_{}_{}_{}.json",
+    "timestamp": 1748275200.0
+}

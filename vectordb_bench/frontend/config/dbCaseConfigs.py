@@ -594,6 +594,20 @@ CaseConfigParamInput_EF_Milvus = CaseConfigInput(
     ],
 )
 
+CaseConfigParamInput_EF_AlayaLite = CaseConfigInput(
+    label=CaseConfigParamType.EF,
+    inputType=InputType.Number,
+    inputConfig={
+        "min": 100,
+        "max": MAX_STREAMLIT_INT,
+        "value": 100,
+    },
+    isDisplayed=lambda config: config[CaseConfigParamType.IndexType]
+    in [
+        IndexType.HNSW.value,
+    ],
+)
+
 CaseConfigParamInput_EF_Weaviate = CaseConfigInput(
     label=CaseConfigParamType.EF,
     inputType=InputType.Number,
@@ -1223,6 +1237,35 @@ CaseConfigParamInput_MongoDBNumCandidatesRatio = CaseConfigInput(
     },
 )
 
+CaseConfigParamInput_IndexType_AlayaLite = CaseConfigInput(
+    label=CaseConfigParamType.IndexType,
+    inputType=InputType.Option,
+    inputConfig={
+        "options": [
+            IndexType.HNSW.value,
+        ],
+    },
+)
+
+CaseConfigParamInput_QuantizationType_AlayaLite = CaseConfigInput(
+    label=CaseConfigParamType.quantizationType,
+    inputType=InputType.Option,
+    inputConfig={
+        "options": ["none"],
+    },
+)
+
+CaseConfigParamInput_EFConstruction_AlayaLite = CaseConfigInput(
+    label=CaseConfigParamType.ef_construction,
+    inputType=InputType.Number,
+    inputConfig={
+        "min": 8,
+        "max": 512,
+        "value": 100,
+    },
+    isDisplayed=lambda config: config[CaseConfigParamType.IndexType] == IndexType.HNSW.value,
+)
+
 
 CaseConfigParamInput_M_Vespa = CaseConfigInput(
     label=CaseConfigParamType.M,
@@ -1491,6 +1534,14 @@ VespaLoadingConfig = [
 ]
 VespaPerformanceConfig = VespaLoadingConfig
 
+AlayaLiteLoadingConfig = [
+    CaseConfigParamInput_IndexType_AlayaLite,
+    CaseConfigParamInput_QuantizationType_AlayaLite,
+    CaseConfigParamInput_EF_AlayaLite,
+    CaseConfigParamInput_EFConstruction_AlayaLite,
+]
+AlayaLitePerformanceConfig = AlayaLiteLoadingConfig
+
 CaseConfigParamInput_IndexType_LanceDB = CaseConfigInput(
     label=CaseConfigParamType.IndexType,
     inputHelp="AUTOINDEX = IVFPQ with default parameters",
@@ -1671,6 +1722,10 @@ CASE_CONFIG_MAP = {
     DB.Vespa: {
         CaseLabel.Load: VespaLoadingConfig,
         CaseLabel.Performance: VespaPerformanceConfig,
+    },
+    DB.AlayaLite: {
+        CaseLabel.Load: AlayaLiteLoadingConfig,
+        CaseLabel.Performance: AlayaLitePerformanceConfig,
     },
     DB.LanceDB: {
         CaseLabel.Load: LanceDBLoadConfig,
