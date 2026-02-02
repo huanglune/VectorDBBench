@@ -11,4 +11,5 @@ venv/
 .venv/
 .idea/
 results/
-logs/
+logs/.alayalite_data/
+.alayalite_data_500k/
