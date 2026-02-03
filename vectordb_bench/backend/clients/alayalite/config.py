@@ -19,24 +19,23 @@ class AlayaLiteConfig(DBConfig):
 
 
 class AlayaLiteHNSWConfig(BaseModel, DBCaseConfig):
-    metric_type: MetricType = MetricType.L2
+    # ✅ 必须保留：给 vdbbench assembler 写入 “数据集语义 metric”
+    # assemble 时会被设置成 OpenAI 数据集的 COSINE
+    metric_type: MetricType = MetricType.COSINE
+
+    # ✅ 你要控制的：索引使用的 metric（l2/ip/cosine）
+    index_metric_type: str = "l2"
+
     quantization_type: str = "none"
 
-    # HNSW 常见参数
     M: int = 16
     ef_construction: int = 200
     ef: int = 200
 
-    # ✅ 新增：capacity（关键）
-    # 500K 建议至少 600K，留余量避免顶满
     capacity: int = 600000
-
-    # ✅ 可选：max_nbrs 对应 IndexParams.max_nbrs（你查到默认 32）
-    # 如果你不想动它可以不加；加了方便对齐 M
     max_nbrs: int = 32
 
     def index_param(self) -> dict:
-        # 目前我们会在 client 的“首次建索引”里用到 capacity/max_nbrs/metric
         return {}
 
     def search_param(self) -> dict:

@@ -120,9 +120,29 @@ class AlayaLite(VectorDB):
                     shutil.rmtree(col_dir)
                     print(f"Collection {self._collection_name} is deleted")
 
+    def _metric_case_value(self) -> str:
+        """
+        Read index metric from case_config.index_metric_type (string).
+        Do NOT use case_config.metric_type: vdbbench treats that as dataset metric.
+        """
+        m = getattr(self._case_config, "index_metric_type", None)
+        m_str = str(m).strip().lower() if m is not None else "l2"
+
+        if m_str in ("euclidean", "l2"):
+            return "l2"
+        if m_str in ("ip", "inner_product"):
+            return "ip"
+        if m_str in ("cosine", "cos"):
+            return "cosine"
+        return "l2"
+
+
     def need_normalize_cosine(self) -> bool:
-        # Keep as False (matches your earlier working runs)
-        return True
+        """
+        OpenAI dataset metric in vdbbench is COSINE.
+        If index metric is not cosine, normalize so L2/IP becomes cosine-equivalent.
+        """
+        return self._metric_case_value() != "cosine"
 
     def _print_save_progress(self, delta_inserted: int, reason: str) -> None:
         print(
@@ -140,10 +160,10 @@ class AlayaLite(VectorDB):
         self._print_save_progress(delta_inserted=delta_inserted, reason=reason)
 
     def _metric_to_str(self) -> str:
-        # alayalite 后端不支持 COSINE enum，因此禁止使用 cosine
-        # 统一用 l2（配合 need_normalize_cosine=True）
-        return "l2"
-
+        """
+        Metric string passed into AlayaLite IndexParams.metric.
+        """
+        return self._metric_case_value()
 
     def _bootstrap_index_with_capacity(self, embeddings: list[list[float]], metadata: list[int]) -> None:
         """

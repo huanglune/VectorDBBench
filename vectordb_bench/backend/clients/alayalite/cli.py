@@ -25,18 +25,30 @@ class AlayaLiteTypedDict(CommonTypedDict, HNSWFlavor1):
         ),
     ]
 
+    metric_type: Annotated[
+        str,
+        click.option(
+            "--metric-type",
+            type=click.Choice(["l2", "ip", "cosine"], case_sensitive=False),
+            default="l2",
+            show_default=True,
+            help="Distance metric for AlayaLite index (l2/ip/cosine).",
+        ),
+    ]
+
 
 @cli.command()
 @click_parameter_decorators_from_typed_dict(AlayaLiteTypedDict)
 def AlayaLite(**params: Unpack[AlayaLiteTypedDict]):
     from .config import AlayaLiteConfig, AlayaLiteHNSWConfig
 
-    # 关键修复：有些版本的 HNSWFlavor1 根本没有 quantization 参数
-    # 所以这里必须用 params.get()，否则 KeyError
     quant = params.get("quantization", None)
+    metric = (params.get("metric_type", "l2") or "l2").strip().lower()
 
     case_params = {
         "quantization_type": quant,
+        # ✅ 关键：写入 index_metric_type
+        "index_metric_type": metric,
         "M": params.get("m", None),
         "ef_construction": params.get("ef_construction", None),
         "ef": params.get("ef_search", None),
@@ -44,9 +56,8 @@ def AlayaLite(**params: Unpack[AlayaLiteTypedDict]):
 
     run(
         db=DB.AlayaLite,
-        # 注意：url 传 str，不要 SecretStr
         db_config=AlayaLiteConfig(url=params["url"]),
-        # 只传入不为 None 的字段
         db_case_config=AlayaLiteHNSWConfig(**{k: v for k, v in case_params.items() if v is not None}),
         **params,
     )
+
